@@ -1,0 +1,22 @@
+# Um diálogo de exemplo para o capítulo 22.
+:guarda
+@Guarda do portão
+O guarda cruza a lança na sua frente. "Ninguém entra na cidade depois do pôr do sol."
+* [!flag:pagou] Aqui estão 5 moedas pela sua gentileza. -> guarda_suborno
+* [flag:pagou] (Passar pelo portão) -> guarda_passa
+* Que cidade chata. -> guarda_bravo
+* Tudo bem, eu espero. -> FIM
+
+:guarda_suborno
+! ouro -5
+! flag pagou
+Ele olha para os lados e guarda as moedas. "Eu não vi nada."
+* Obrigado. -> guarda
+
+:guarda_passa
+O portão range e se abre. A cidade está acesa lá dentro.
+* (Entrar) -> FIM
+
+:guarda_bravo
+"Chata, mas viva. Diferente de quem dorme lá fora." Ele aponta para a floresta escura.
+* Tem razão. -> guarda

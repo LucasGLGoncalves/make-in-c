@@ -1,0 +1,25 @@
+Escritório de Ana Torres
+# letra | nome | glifo | cor | nó do diálogo | condição para aparecer
+m|Marta Vidal|U+263B|CIANO_CLARO|marta_escritorio|!flag:contratada
+t|telefone|U+03A9|CINZA|telefone|
+a|arquivo de aço|U+25A0|CINZA_ESCURO|arquivo|
+j|jornal da noite|U+2261|BRANCO|jornal|
+g|garrafa de uísque|!|MARROM|garrafa|
+MAPA
+###WWWWWWWWWWWWWWWWWWWWWWWWWW###
+#.LLLLLL.....................a.#
+#..............t...............#
+#...........MMMMMM.............#
+#...........MMMMMM.............#
+#.......@.....j................#
+#...................m.MMM......#
+#.....................MMM......#
+#.........................g....#
+######+#########################
+     #.#
+     #+#
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,*,S,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+##############################NNNNNNN#######
+FIM

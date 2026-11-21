@@ -1,0 +1,166 @@
+# Diálogos de "Estrela Errante".
+# Condições: sistema:id  creditos:N  flag:nome  divida  oferta  pode_quitar
+# Efeitos:   mercado  estaleiro  oferta  pagar N  quitar  creditos N  flag nome
+
+:barwoman
+@Lua, a barwoman
+Lua serve um líquido azul que solta fumaça. "Primeira vez aqui, capitã? Ou só parece cansada?"
+* O que tem de bom para beber? -> bar_bebida
+* Ouviu algum boato? -> bar_boato
+* Até mais. -> FIM
+
+:bar_bebida
+"Nebulosa Azul. Por conta da casa, para quem escuta as minhas histórias." Ela pisca.
+* Então conte uma. -> bar_boato
+
+:bar_boato
+Lua se debruça sobre o balcão e baixa a voz.
+* [sistema:nova_lisboa] (Ouvir) -> boato_nova_lisboa
+* [sistema:ceres] (Ouvir) -> boato_ceres
+* [sistema:eden] (Ouvir) -> boato_eden
+* [sistema:hefesto] (Ouvir) -> boato_hefesto
+* [sistema:tycho] (Ouvir) -> boato_tycho
+* [sistema:corsario] (Ouvir) -> boato_corsario
+* [sistema:aurora] (Ouvir) -> boato_aurora
+* [sistema:limiar] (Ouvir) -> boato_limiar
+
+:boato_nova_lisboa
+"Os ricos daqui pagam fortunas por artigos de luxo e eletrônicos. Dizem que em Porto Corsário o luxo sai pela metade do preço... se você sobreviver aos piratas."
+* Bom saber. -> barwoman
+
+:boato_ceres
+"Mineiro come como cavalo. Traga alimentos e água de Éden-4 e você sai daqui rica. E o minério de Ceres vale ouro na Forja de Hefesto."
+* Bom saber. -> barwoman
+
+:boato_eden
+"Nossas colheitadeiras vivem quebrando. Máquinas da Forja de Hefesto valem o dobro aqui. Remédios de Tycho também."
+* Bom saber. -> barwoman
+
+:boato_hefesto
+"A Forja engole minério sem parar. Traga de Ceres ou de Limiar. E se precisar de um canhão de verdade, o estaleiro daqui vende o modelo mais forte."
+* Bom saber. -> barwoman
+
+:boato_tycho
+"Os laboratórios de Tycho precisam de ligas metálicas. Eletrônicos e remédios saem baratos daqui. Em Aurora pagam o que você pedir."
+* Bom saber. -> barwoman
+
+:boato_corsario
+"Aqui todo mundo tem algo a esconder, capitã. Luxo barato, remédio caríssimo. E ninguém paga recompensa por pirata: metade deste bar É pirata."
+* Bom saber. -> barwoman
+
+:boato_aurora
+"Os turistas daqui pagam qualquer coisa por luxo e eletrônicos. E a água sai quase de graça, filtrada das geleiras."
+* Bom saber. -> barwoman
+
+:boato_limiar
+"O minério daqui é o mais barato do setor. Mas cuidado: os piratas de Porto Corsário caçam por estas bandas."
+* Bom saber. -> barwoman
+
+:agente
+@Agente de cargas
+Um homem de colete cheio de bolsos confere uma prancheta.
+"Precisa de trabalho honesto? Tenho cargas que precisam chegar ao destino. Pago bem, e pago na entrega."
+* [oferta] Mostre o que você tem. -> agente_oferta
+* [!oferta] Tem alguma carga para mim? -> agente_nada
+* Agora não. -> FIM
+
+:agente_oferta
+! oferta
+"Lembre: atraso é carga confiscada."
+* Combinado. -> FIM
+
+:agente_nada
+"Hoje não, capitã. Ou você já está com encomendas demais. Tente em outra estação."
+* Tudo bem. -> FIM
+
+:terminal
+@Terminal do mercado
+A tela verde pisca: BEM-VINDO AO MERCADO LIVRE. PREÇOS ATUALIZADOS A CADA CHEGADA.
+* Abrir o mercado. -> terminal_abrir
+* Desligar. -> FIM
+
+:terminal_abrir
+! mercado
+OBRIGADO PELA PREFERÊNCIA.
+* Desligar. -> FIM
+
+:engenheira
+@Engenheira Kátia
+Uma mulher de macacão sujo de graxa sai de baixo de um cargueiro. "Essa sua nave já viu dias melhores, hein?"
+* Preciso de reparos e combustível. -> engenheira_estaleiro
+* Quero melhorar a nave. -> engenheira_estaleiro
+* [!flag:dica_motor] Alguma dica para uma capitã novata? -> engenheira_dica
+* Até logo. -> FIM
+
+:engenheira_estaleiro
+! estaleiro
+"Volte sempre. E tente não voltar em pedaços."
+* Até logo. -> FIM
+
+:engenheira_dica
+! flag dica_motor
+"O motor tem marchas: a seta para cima acelera, a seta para baixo desacelera até o freio. Para atracar, chegue devagar perto da estação e aperte D."
+
+"E fique longe da estrela. Escudo nenhum aguenta aquele calor. Para saltar, afaste-se dela e aperte J."
+* Obrigada. -> engenheira
+
+:banqueiro
+@Sr. Albuquerque, do Banco Orbital
+Um homem de terno impecável não levanta os olhos da tela. "A capitã da Estrela Errante. Sua dívida conosco vence no dia 100."
+* [divida pode_quitar] Quero quitar a dívida inteira. -> banco_quitar
+* [divida creditos:5000 !pode_quitar] Pagar 5.000 créditos. -> banco_5000
+* [divida creditos:1000 !pode_quitar] Pagar 1.000 créditos. -> banco_1000
+* [divida] Quanto falta mesmo? -> banco_saldo
+* Até logo. -> FIM
+
+:banco_quitar
+! quitar
+Pela primeira vez, o sr. Albuquerque olha para você. Ele carimba um papel com força desnecessária.
+"Quitada. A Estrela Errante é sua, capitã. Inteira e sem dívidas."
+
+Pela janela, a velha nave parece um pouco menos velha.
+* (Fim) -> FIM
+
+:banco_5000
+! pagar 5000
+"Recebido. Volte quando tiver o resto."
+* Até logo. -> FIM
+
+:banco_1000
+! pagar 1000
+"Recebido. Toda moeda conta."
+* Até logo. -> FIM
+
+:banco_saldo
+"Está no seu painel, capitã: a linha vermelha que diz 'Dívida'. Bancos não esquecem números."
+* Claro. -> banqueiro
+
+:noticias
+@Terminal de notícias
+Letras azuis correm pela tela.
+* [sistema:corsario] Ler as manchetes. -> noticias_corsario
+* [!sistema:corsario] Ler as manchetes. -> noticias_geral
+* Desligar. -> FIM
+
+:noticias_geral
+REDE DE NOTÍCIAS DO SETOR: Patrulha paga 250 créditos por pirata abatido fora de Porto Corsário. Banco Orbital anuncia lucro recorde. Colheita farta em Éden-4 derruba o preço dos alimentos.
+* Desligar. -> FIM
+
+:noticias_corsario
+O TERMINAL FOI INVADIDO: "AQUI NINGUÉM PAGA RECOMPENSA. AQUI QUEM MANDA É A IRMANDADE."
+* Desligar. -> FIM
+
+:viajante
+@Viajante
+Um velho de capa remendada olha as estrelas pela janela do corredor.
+"Sabe por que chamam esta região de 'setor'? Porque um dia foi só um pedaço de um império maior. Os impérios passam. As rotas de comércio ficam."
+* [!flag:dica_viajante] Algum conselho, vovô? -> viajante_dica
+* Boa viagem. -> FIM
+
+:viajante_dica
+! flag dica_viajante
+! creditos 100
+"Compre barato onde se produz, venda caro onde se consome. Isso é toda a economia que existe." Ele lhe estende uma ficha de crédito. "Para a sua primeira carga. Eu também já fui jovem e endividado."
+
+(Você recebe 100 créditos.)
+* Obrigada! -> FIM

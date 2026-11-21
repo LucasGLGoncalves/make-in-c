@@ -1,0 +1,10 @@
+# Pistas de "Porto Sombrio":  id | título | texto do caderno
+copo         | O copo de Celeste      | Resíduo esverdeado e cheiro amargo de remédio no fundo do copo de chá. Alguém pôs alguma coisa na bebida.
+receita      | Receita de digitalina  | Digitalina 0,25 mg para Celeste, assinada pelo Dr. Henrique Sales. Celeste nunca teve problema de coração.
+bilhete      | Bilhete rasgado        | "Acabou, Henrique. Eu sei o que você faz com as receitas. Amanhã eu conto tudo ao delegado. — C."
+frasco       | Frasco vazio           | No armário do consultório, o frasco de digitalina do lote 32 foi esvaziado, lavado e escondido.
+testemunha   | Depoimento de Bené     | À 1h30, um Opala preto com adesivo de médico saiu do beco da Lua Azul. Motorista de terno claro e bigode fino.
+agenda       | Agenda do doutor       | O Dr. Sales cancelou todas as consultas de quinta a partir das 23h: "compromisso pessoal".
+livro        | Livro-caixa da Lua Azul | Otávio paga "T.N." toda semana. E deu 500 a "C.V. — para ir embora".
+alibi_otavio | Álibi de Otávio        | Zé jura que Otávio ficou no balcão do bar das 23h às 3h.
+alibi_lucia  | Álibi de Lúcia         | Lúcia cantava no palco à 1h30, diante de cinquenta pessoas.

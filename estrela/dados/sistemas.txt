@@ -1,0 +1,11 @@
+# Sistemas estelares de "Estrela Errante".
+# id | nome | x | y | economia | perigo (0-3) | descrição
+# economia: agricola, mineradora, industrial, tecnologica, rica, foradalei
+nova_lisboa | Nova Lisboa     | 34 | 9  | rica        | 0 | A capital do setor: anéis de arranha-céus em órbita e o Banco Orbital, que guarda a sua dívida.
+ceres       | Ceres Profunda  | 14 | 4  | mineradora  | 1 | Asteroides escavados como queijo suíço. Os mineiros pagam caro por comida e água.
+eden        | Éden-4          | 20 | 14 | agricola    | 0 | Um mundo-fazenda de céu verde. Comida barata, máquinas caras.
+hefesto     | Forja de Hefesto| 48 | 3  | industrial  | 1 | Fundições do tamanho de luas. Ligas e máquinas saem baratas daqui.
+tycho       | Tycho Alto      | 56 | 13 | tecnologica | 1 | Laboratórios e fábricas de chips. Eletrônicos e remédios de primeira.
+corsario    | Porto Corsário  | 70 | 7  | foradalei   | 3 | Ninguém pergunta, ninguém responde. Luxo barato, de origem duvidosa.
+aurora      | Aurora Austral  | 42 | 17 | rica        | 0 | Resorts para os ricos do setor. Pagam fortunas por luxo e eletrônicos.
+limiar      | Limiar          | 5  | 16 | mineradora  | 2 | A última estação antes do vazio. Aqui o minério é quase de graça.

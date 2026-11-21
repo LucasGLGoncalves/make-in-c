@@ -1,0 +1,513 @@
+# Diálogos de "Porto Sombrio".
+# Condições: pista:id  flag:nome  dinheiro:N  pistas:N   (! nega)
+# Efeitos:   pista id  flag nome  tempo N  dinheiro N  final bom|fraco|errado
+
+# ======================== ESCRITÓRIO ========================
+:marta_escritorio
+@Marta Vidal
+Uma mulher de capa de chuva molhada espera em frente à sua mesa. Ela torce as luvas como quem torce um pano.
+"Detetive Torres? Meu nome é Marta Vidal. Minha irmã, Celeste, morreu ontem à noite no camarim da Lua Azul."
+"A polícia diz que foi suicídio. Celeste nunca faria isso. Ela tinha planos. Ia embora desta cidade."
+* O que a polícia encontrou? -> marta_policia
+* Por que acha que não foi suicídio? -> marta_planos
+* Meu preço é alto. -> marta_preco
+
+:marta_policia
+"Um copo, uma cantora morta e um delegado com pressa. O delegado Ramos fechou o caso em dez minutos. Ele vai arquivar tudo amanhã, às seis da manhã."
+* Então temos até as seis. -> marta_contrato
+
+:marta_planos
+"Ela me ligou anteontem. Disse que tinha descoberto uma coisa sobre um homem e que ia contar tudo. Estava com medo, mas feliz. Gente que vai se matar não fica feliz."
+* Que homem? -> marta_homem
+
+:marta_homem
+"Ela não disse o nome. Celeste guardava segredos como quem guarda moedas."
+* Eu aceito o caso. -> marta_contrato
+
+:marta_preco
+"Eu sei. Tenho cem para começar." Ela coloca um envelope sobre a mesa.
+* Fechado. -> marta_contrato
+
+:marta_contrato
+! flag contratada
+! flag local_apartamento
+! dinheiro 100
+"Obrigada, detetive. Vou esperar no apartamento dela; eu tenho a chave. Mas comece pela Lua Azul. Foi lá que a encontraram."
+
+(O endereço do apartamento de Celeste está anotado. Saia pela rua e pise no ponto de táxi.)
+* Vamos trabalhar. -> FIM
+
+:telefone
+O telefone preto está mudo há uma semana. Você esqueceu de pagar a conta. De novo.
+* Deixar para lá. -> FIM
+
+:arquivo
+O arquivo de aço guarda doze anos de casos: maridos infiéis, joias perdidas, um cachorro sequestrado. Nenhum assassinato.
+"Até hoje", você pensa.
+* Fechar a gaveta. -> FIM
+
+:jornal
+@Jornal da Noite
+"CANTORA DA LUA AZUL É ENCONTRADA MORTA. Celeste Vidal, 29 anos, foi achada sem vida no camarim da casa noturna na madrugada de quinta. Segundo o delegado Ramos, tudo indica suicídio. O dono da boate, Otávio Brandão, lamentou: 'Era a voz desta cidade'."
+* Dobrar o jornal. -> FIM
+
+:garrafa
+Um dedo de uísque barato no fundo da garrafa.
+* [!flag:bebeu] Beber. -> garrafa_beber
+* Melhor não. -> FIM
+
+:garrafa_beber
+! flag bebeu
+! tempo 5
+O uísque desce queimando. Lá fora, a chuva não dá trégua. Você se sente pronta para qualquer coisa. Quase.
+* Ao trabalho. -> FIM
+
+# ======================== BOATE LUA AZUL ========================
+:ze
+@Zé, o barman
+Zé enxuga o balcão com um pano que já foi branco. "Vai beber ou vai perguntar, detetive?"
+* Quem encontrou Celeste? -> ze_encontrou
+* [!pista:alibi_otavio] Onde estava o Otávio naquela noite? -> ze_otavio
+* [flag:viu_livro !flag:ze_tito] Quem é "T.N."? -> ze_tito
+* [dinheiro:5 !flag:conhaque] Um conhaque. (5 pratas) -> ze_conhaque
+* Até mais, Zé. -> FIM
+
+:ze_encontrou
+"A Lúcia. Foi chamar a Celeste para o último número, às duas. Achou ela caída, com o copo do lado."
+"Celeste sempre tomava um chá antes de cantar. Mel e limão. Ela mesma preparava, no camarim."
+* Alguém entrou no camarim? -> ze_camarim
+
+:ze_camarim
+! flag homem_terno
+"Gente demais. É um corredor só, detetive. Músicos, garçons... E um homem de terno claro, à uma e pouco. Entrou pela porta dos fundos. Não vi o rosto."
+* Interessante. -> ze
+
+:ze_otavio
+! pista alibi_otavio
+"Aqui, no meu balcão, das onze às três. Bebendo o meu estoque e reclamando das dívidas. Eu juro pela minha mãe."
+* Dívidas? -> ze_dividas
+
+:ze_dividas
+! flag local_cais
+"O Otávio deve dinheiro a gente ruim. Gente do cais." Ele baixa a voz. "Se quiser saber mais, procure o Tito Navalha no armazém do porto."
+
+(O Cais do Porto foi anotado no seu caderno de endereços.)
+* Obrigada, Zé. -> ze
+
+:ze_tito
+! flag ze_tito
+! flag local_cais
+"T.N.? Tito Navalha. Cobra para os agiotas do porto. Mas ele não mataria uma cantora. Mataria o Otávio, isso sim."
+* Entendi. -> ze
+
+:ze_conhaque
+! dinheiro -5
+! flag conhaque
+! tempo 5
+O conhaque é ruim, mas quente. Zé chega mais perto. "Celeste andava com um doutor, sabia? Gente fina. Vinha buscá-la de carro preto."
+* Um doutor? -> ze_doutor
+
+:ze_doutor
+! flag local_consultorio
+! flag conhece_sales
+"Doutor Henrique Sales. Consultório na Avenida Atlântica. Bonito, educado. Daqueles que nunca pagam a conta do bar."
+* Obrigada. -> ze
+
+:lucia
+@Lúcia Paz
+Lúcia está sentada na beira do palco, ainda com o vestido de lantejoulas. Os olhos estão vermelhos.
+"Se veio me acusar, entre na fila. A polícia já fez isso. Todo mundo sabe que eu queria o lugar dela."
+* Você queria? -> lucia_queria
+* [!pista:alibi_lucia] Onde você estava à 1h30? -> lucia_alibi
+* Foi você que a encontrou, não foi? -> lucia_encontrou
+* Até logo. -> FIM
+
+:lucia_queria
+"Queria. Mas não assim. A Celeste me ensinou a segurar a nota longa. Eu cantei no enterro do pai dela."
+* Desculpe. -> lucia
+
+:lucia_alibi
+! pista alibi_lucia
+"No palco, cantando 'Noite Sem Fim'. Cinquenta pessoas me viram. Pergunte a qualquer bêbado deste salão."
+* Vou perguntar. -> lucia
+
+:lucia_encontrou
+"Às duas. Ela estava no chão, fria. O copo de chá ainda estava ali, na penteadeira. A polícia nem olhou direito."
+"E tinha um cheiro estranho no ar. Amargo. Cheiro de farmácia."
+* Obrigada, Lúcia. -> lucia
+
+:bebado
+@Frequentador bêbado
+Um homem de gravata frouxa ergue o copo para você. "À Celeste! À maior voz... hic... de Porto Sombrio!"
+* [!flag:bebado] Você viu a Lúcia cantar ontem? -> bebado_lucia
+* Saúde. -> FIM
+
+:bebado_lucia
+! flag bebado
+"A Lúcia? A noite toda! Uma da manhã, uma e meia, duas... Cantou até ficar rouca. Linda, linda."
+* Obrigada. -> FIM
+
+:otavio
+@Otávio Brandão
+Um homem gordo de colete conta notas atrás da mesa. Ele guarda o dinheiro na gaveta assim que você entra.
+"Detetive particular? A polícia já resolveu o caso. Suicídio. Triste, muito triste. Agora, se me dá licença..."
+* Celeste ia contar um segredo. Sobre você? -> otavio_segredo
+* [pista:livro] Quem é "T.N.", e por que você paga a ele? -> otavio_tito
+* Já estou de saída. -> FIM
+
+:otavio_segredo
+! flag conhece_sales
+! flag local_consultorio
+"Sobre mim?" Ele ri, mas o riso morre cedo. "Celeste cantava. Não se metia em contas. Pergunte ao doutorzinho dela, se quer saber de segredos."
+* Doutorzinho? -> otavio_doutor
+
+:otavio_doutor
+"Henrique Sales. Médico das madames, na Avenida Atlântica. Vinha buscá-la toda noite. Nas últimas semanas, os dois brigavam aos gritos no camarim."
+* Obrigada pela ajuda. -> FIM
+
+:otavio_tito
+Otávio fica pálido. "Isso... isso é um empréstimo. Negócios. Eu nunca encostei um dedo na Celeste. Passei a noite no bar, pergunte ao Zé!"
+* Vou perguntar. -> FIM
+
+:copo
+@Camarim de Celeste
+Na penteadeira, entre pincéis e batons, está o copo que a polícia esqueceu de levar.
+* [!pista:copo] Examinar o copo. -> copo_examinar
+* Deixar como está. -> FIM
+
+:copo_examinar
+! pista copo
+! tempo 5
+Você cheira o fundo do copo. Mel, limão... e um amargor de farmácia por baixo. Há um resíduo esverdeado grudado no vidro.
+
+Chá não fica verde. Alguém colocou alguma coisa aqui.
+* Embrulhar o copo num lenço. -> FIM
+
+:espelho
+No espelho do camarim, alguém escreveu com batom: "Volto às 2. C." A letra é bonita e apressada.
+
+Ela pretendia voltar.
+* Seguir em frente. -> FIM
+
+:livro
+@Livro-caixa
+Um livro de capa verde sobre a mesa de Otávio.
+* [!pista:livro] Folhear o livro-caixa. -> livro_ler
+* Deixar o livro. -> FIM
+
+:livro_ler
+! pista livro
+! flag viu_livro
+! tempo 10
+Otávio está distraído com o dinheiro. Você folheia rápido: toda semana, um pagamento a "T.N.", sempre em dinheiro vivo. Na última página: "C.V. — 500 — para ir embora".
+
+Otávio pagava Celeste para sumir? Ou para ficar calada?
+* Fechar o livro antes que ele perceba. -> FIM
+
+# ======================== APARTAMENTO ========================
+:marta_apto
+@Marta Vidal
+Marta está sentada no sofá, segurando uma xícara que já esfriou. "Encontrou alguma coisa, detetive?"
+* [!flag:marta_coracao] Celeste tinha algum problema de saúde? -> marta_coracao
+* [pista:receita !flag:marta_receita] Celeste tomava digitalina? -> marta_receita
+* Fique aqui. Eu volto. -> FIM
+
+:marta_coracao
+! flag marta_coracao
+"Celeste? Nadava no mar em julho. Coração de cavalo, dizia o nosso pai. Nunca tomou remédio nenhum, nem para dor de cabeça."
+* Bom saber. -> marta_apto
+
+:marta_receita
+! flag marta_receita
+Marta lê a receita e fica branca. "Digitalina? Isso é remédio de coração! Celeste nunca..." Ela larga o papel. "Quem é esse Henrique Sales?"
+* É o que eu vou descobrir. -> FIM
+
+:escrivaninha
+Uma escrivaninha de madeira escura, com papel de carta e um tinteiro.
+* [!pista:bilhete] Procurar nas gavetas. -> escrivaninha_gaveta
+* [!pista:bilhete] Olhar o cesto de lixo. -> escrivaninha_lixo
+* Deixar como está. -> FIM
+
+:escrivaninha_gaveta
+! tempo 5
+Contas de luz, partituras, um batom sem tampa. Nada que importe.
+* Olhar o cesto de lixo. -> escrivaninha_lixo
+* Desistir. -> FIM
+
+:escrivaninha_lixo
+! pista bilhete
+! tempo 5
+No fundo do cesto, um papel rasgado em dois. Você junta os pedaços:
+
+"Acabou, Henrique. Eu sei o que você faz com as receitas. Amanhã eu conto tudo ao delegado. — C."
+* Guardar o bilhete. -> FIM
+
+:armario_banheiro
+O armário do banheiro tem um espelho manchado na porta.
+* [!pista:receita] Abrir o armário. -> armario_abrir
+* Não mexer. -> FIM
+
+:armario_abrir
+! pista receita
+! flag local_consultorio
+! flag conhece_sales
+! tempo 5
+Atrás dos perfumes, uma receita dobrada: "Digitalina, 0,25 mg — uso contínuo." Paciente: Celeste Vidal. Médico: Dr. Henrique Sales, Avenida Atlântica, 410.
+
+Mas não há vidro de remédio nenhum no armário.
+* Levar a receita. -> FIM
+
+:foto
+! flag conhece_sales
+! flag local_consultorio
+Um porta-retratos na estante. Celeste ri na praia, abraçada a um homem de terno claro e bigode fino.
+
+Atrás da foto, uma dedicatória: "Para H., meu doutor. Para sempre? — C."
+* Terno claro... -> FIM
+
+:vitrola
+Na vitrola, um disco de Celeste: "Noite Sem Fim". A agulha parou no meio da última faixa.
+* [!flag:ouviu] Tocar o disco. -> vitrola_tocar
+* Deixar em silêncio. -> FIM
+
+:vitrola_tocar
+! flag ouviu
+! tempo 5
+A voz de Celeste enche o apartamento, rouca e doce. Marta cobre o rosto com as mãos. Você deixa a música terminar.
+* ... -> FIM
+
+:cinzeiro
+Duas marcas de cigarro no cinzeiro: os baratos de Celeste e uma cigarrilha cara, com piteira dourada.
+* Guardar a informação. -> FIM
+
+# ======================== CONSULTÓRIO ========================
+:gloria
+@Dona Glória
+A recepcionista ajeita os óculos e o coque. "O doutor não atende sem hora marcada. E já passa das dez."
+* Sou da polícia. (mentir) -> gloria_mentira
+* [!flag:gloria_distraida] Estou sem jantar... a senhora tem um café? -> gloria_cafe
+* Volto outra hora. -> FIM
+
+:gloria_mentira
+"Da polícia?" Ela olha seus sapatos molhados e gastos. "Sei. E eu sou a Rainha da Inglaterra. Sente-se e espere."
+* Tudo bem. -> gloria
+
+:gloria_cafe
+! flag gloria_distraida
+! tempo 10
+Dona Glória suspira, mas sorri. "Coitada. Vou passar um café fresco. Não mexa em nada!" Ela some pela porta da cozinha.
+
+O corredor do depósito está livre.
+* Agradecer. -> FIM
+
+:agenda
+@Agenda de consultas
+Um livro grosso de capa vermelha, aberto em cima do balcão.
+* [!pista:agenda] Ler a página de quinta-feira. -> agenda_ler
+* Fechar a agenda. -> FIM
+
+:agenda_ler
+! pista agenda
+Quinta-feira: oito pacientes riscados a caneta vermelha a partir das 23h. Na margem, com a letra do doutor: "Cancelar tudo. Compromisso pessoal."
+* Interessante. -> FIM
+
+:armario_remedios
+Um armário de vidro com dezenas de frascos rotulados.
+* [!flag:gloria_distraida] Abrir o armário. -> armario_gloria
+* [flag:gloria_distraida !pista:frasco] Abrir o armário. -> armario_frasco
+* Deixar. -> FIM
+
+:armario_gloria
+"Ei! O que pensa que está fazendo?" Dona Glória aparece no corredor com as mãos na cintura. Melhor tentar quando ela estiver ocupada.
+* Desculpe. -> FIM
+
+:armario_frasco
+! pista frasco
+! tempo 5
+Fileiras de frascos em ordem alfabética. Na letra D, um buraco: o vidro de "Digitalina — lote 32" está ali, mas vazio. Lavado. Seco. Escondido atrás dos outros.
+
+A dose que cabia nele pararia o coração de um cavalo.
+* Embrulhar o frasco. -> FIM
+
+:planta
+Uma planta de plástico coberta de poeira. Até as plantas deste consultório mentem.
+* ... -> FIM
+
+:sales
+@Dr. Henrique Sales
+Um homem de terno claro e bigode fino ergue os olhos de uma pilha de fichas. Uma cigarrilha de piteira dourada queima no cinzeiro.
+"Em que posso ajudar? Seja breve, por favor. Tive uma semana terrível."
+* Você conhecia Celeste Vidal. -> sales_celeste
+* [pista:receita] Por que receitou digitalina a uma mulher saudável? -> sales_receita
+* [pista:bilhete] "Acabou, Henrique." Reconhece a letra? -> sales_bilhete
+* Onde estava na quinta, à 1h30? -> sales_alibi
+* Já vou indo. -> FIM
+
+:sales_celeste
+"Celeste era minha paciente. E minha amiga." Ele apaga a cigarrilha. "Ela era frágil. Muito mais frágil do que parecia no palco."
+* Frágil? Ela nadava no mar em julho. -> sales
+
+:sales_receita
+O doutor sorri com a boca, não com os olhos. "Arritmia. Sigilo médico, detetive. Não espero que entenda."
+* Entendo mais do que você imagina. -> sales
+
+:sales_bilhete
+! flag sales_nervoso
+Ele lê o bilhete. A mão treme um pouco. "Uma briga de namorados. Todo casal tem as suas. Isso não prova nada."
+* Veremos. -> sales
+
+:sales_alibi
+"Em casa. Dormindo. Sozinho, infelizmente." Ele pega o chapéu. "E agora, se me dá licença, tenho um compromisso."
+* [flag:sales_nervoso] (Ele está suando.) -> FIM
+* Até breve, doutor. -> FIM
+
+# ======================== CAIS ========================
+:bene
+@Bené, o taxista
+Um homem baixinho fuma encostado num táxi amarelo. "Quer corrida, moça? Com essa chuva o preço é dobrado."
+* Você faz ponto perto da Lua Azul? -> bene_ponto
+* Agora não. -> FIM
+
+:bene_ponto
+"Faço ponto em toda parte. Mas na quinta eu estava no beco da Lua Azul, esperando uma freguesa."
+* Viu alguém sair pelos fundos à 1h30? -> bene_viu
+
+:bene_viu
+"Memória de taxista é cara, sabe como é." Ele esfrega o polegar no indicador.
+* [dinheiro:20 !pista:testemunha] (Dar 20 pratas) -> bene_pago
+* [flag:homem_terno !pista:testemunha] Um homem de terno claro. Você viu, Bené. -> bene_pressao
+* Deixa pra lá. -> FIM
+
+:bene_pago
+! dinheiro -20
+! pista testemunha
+Ele guarda o dinheiro. "Uma e meia, um Opala preto saiu do beco cantando pneu. O motorista era de terno claro, bigodinho fino. No vidro, um adesivo de médico: aquela cobra no cajado."
+* Obrigada, Bené. -> FIM
+
+:bene_pressao
+! pista testemunha
+Bené olha para os lados. "Tá bom, tá bom. Opala preto, uma e meia, terno claro, bigodinho fino. Tinha adesivo de médico no vidro. Agora some daqui antes que alguém me veja falando com detetive."
+* Obrigada, Bené. -> FIM
+
+:tito
+@Tito Navalha
+Um homem enorme, com uma cicatriz da orelha ao queixo, está encostado no píer.
+"Tá perdida, moça? O cais não é lugar de gente bonita."
+* Você cobra o Otávio Brandão. -> tito_otavio
+* Você matou Celeste Vidal? -> tito_celeste
+* Já estou indo. -> FIM
+
+:tito_otavio
+"Cobro. Ele deve até as calças. Mas eu quero ele vivo e pagando, não morto." Ele cospe no chão. "E a cantora? Essa eu nem conhecia."
+* Onde estava na quinta à noite? -> tito_alibi
+
+:tito_alibi
+! flag tito_alibi
+"Aqui, jogando carteado com os estivadores. Pergunta pro pescador ali do outro píer."
+* Vou perguntar. -> FIM
+
+:tito_celeste
+Tito ri, e o riso dele é pior que a cicatriz. "Moça, se eu matasse alguém, ia ser com isto aqui." Ele mostra a navalha. "Veneno é coisa de gente fina."
+* Gente fina... -> FIM
+
+:pescador
+@Pescador
+Um velho remenda uma rede debaixo de um toldo furado.
+* [flag:tito_alibi] O Tito esteve aqui na quinta à noite? -> pescador_tito
+* A pesca está boa? -> pescador_pesca
+* Boa noite. -> FIM
+
+:pescador_tito
+"O Navalha? Ganhou meu salário do mês no carteado, até as quatro da manhã. Desgraçado."
+* Obrigada. -> FIM
+
+:pescador_pesca
+"Com essa chuva? Só pesco resfriado."
+* Boa sorte. -> FIM
+
+:caixotes
+Caixotes de madeira com a marca "LUA AZUL — BEBIDAS". Contrabando, provavelmente. Mas não é esse o seu caso.
+* Seguir em frente. -> FIM
+
+# ======================== DELEGACIA ========================
+:ramos
+@Delegado Ramos
+O delegado Ramos não tira os pés da mesa. "Torres. Que surpresa desagradável. Veio me ensinar a trabalhar?"
+* Celeste Vidal não se matou. -> ramos_caso
+* Estou pronta para apontar o culpado. -> ramos_acusar
+* Só passei para dar boa-noite. -> FIM
+
+:ramos_caso
+"Copo, cantora triste, noite de chuva. Já vi isso cem vezes. Às seis da manhã eu assino o arquivamento e vou dormir."
+"A não ser que você me traga um nome. E provas. Provas de verdade."
+* Entendido. -> FIM
+
+:ramos_acusar
+Ramos tira os pés da mesa pela primeira vez. "Então? Quem foi?"
+* Otávio Brandão. -> acusa_otavio
+* Lúcia Paz. -> acusa_lucia
+* [flag:local_cais] Tito Navalha. -> acusa_tito
+* [flag:conhece_sales] Dr. Henrique Sales. -> acusa_sales
+* Ainda não tenho certeza. -> FIM
+
+:acusa_otavio
+Ramos cruza os braços. "O dono da boate? Tem certeza?"
+* [pista:alibi_otavio] (Pensando bem, o Zé jurou que ele não saiu do bar.) -> ramos_acusar
+* Tenho certeza. Prenda o Otávio. -> final_errado
+
+:acusa_lucia
+Ramos cruza os braços. "A cantora rival? Tem certeza?"
+* [pista:alibi_lucia] (Pensando bem, cinquenta pessoas a viram no palco.) -> ramos_acusar
+* Tenho certeza. Prenda a Lúcia. -> final_errado
+
+:acusa_tito
+Ramos cruza os braços. "O Navalha? Tem certeza?"
+* [flag:tito_alibi] (Pensando bem, ele estava no carteado do cais.) -> ramos_acusar
+* Tenho certeza. Prenda o Tito. -> final_errado
+
+:acusa_sales
+"O doutor? O médico das madames?" Ramos se inclina na cadeira. "Isso é sério, Torres. O que você tem?"
+* [pista:copo pista:frasco pista:testemunha] (Mostrar o copo, o frasco vazio e o depoimento de Bené) -> final_bom
+* [pista:copo pista:receita pista:bilhete] (Mostrar o copo, a receita e o bilhete) -> final_bom
+* Mostrar o que eu tenho. -> final_fraco
+* Deixa pra lá. -> FIM
+
+:final_bom
+! final bom
+Ramos examina tudo em silêncio. Ele acende um cigarro e não fuma.
+"Veneno no chá, e o doutor no beco à 1h30." Ele pega o chapéu. "Peixoto! Viatura. Vamos buscar um médico."
+
+Às cinco da manhã, Henrique Sales confessa. Celeste ia denunciá-lo por vender receitas falsas aos ricos da cidade. Ele preferiu calá-la.
+
+A chuva para quando você sai da delegacia. Pela primeira vez em três dias, Porto Sombrio tem estrelas.
+* (Fim) -> FIM
+
+:final_fraco
+! final fraco
+Ramos ouve tudo e balança a cabeça. "Palpites, Torres. Isso é tudo o que você tem. O advogado do doutor me engole no café da manhã."
+
+Às seis, ele assina o arquivamento. Celeste Vidal vira uma nota de rodapé no jornal de sábado.
+
+Mas você sabe. E o doutor sabe que você sabe.
+* (Fim) -> FIM
+
+:final_errado
+! final errado
+Ramos dá de ombros e manda buscar o suspeito. Por duas semanas, os jornais celebram a prisão.
+
+Então surge um álibi impossível de ignorar, e o caso desmorona. O verdadeiro assassino nunca mais é incomodado.
+* (Fim) -> FIM
+
+:escrivao
+@Escrivão Peixoto
+O escrivão datilografa com dois dedos. "O delegado está na sala dele. Boa sorte. Vai precisar."
+* Obrigada. -> FIM
+
+:preso
+Um bêbado dorme na cela, abraçado ao próprio sapato.
+* Deixar dormir. -> FIM
+
+:quadro
+@Quadro de avisos
+"PROCURA-SE: Opala preto, placa adulterada, visto em atropelamento na Avenida Atlântica." O papel é de três meses atrás.
+* Hum. -> FIM

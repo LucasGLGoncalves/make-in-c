@@ -1,0 +1,23 @@
+# Itens de "A Coroa de Ferro".
+# Campos separados por '|':
+# id | nome | glifo | cor | tipo | slot | valor | ataque | defesa | efeito | prof_min | descrição
+# glifo: um caractere, ou U+XXXX para um símbolo Unicode.
+# tipo: ouro, arma, armadura, pocao, pergaminho, coroa
+# slot: nenhum, mao, escudo, corpo, cabeca, anel
+ouro          | moedas de ouro       | $      | AMARELO        | ouro       | nenhum | 1   | 0 | 0 | 0  | 0 | O brilho que move o mundo.
+adaga         | adaga                | )      | CINZA          | arma       | mao    | 10  | 2 | 0 | 0  | 1 | Curta, leve e traiçoeira.
+espada_curta  | espada curta         | )      | BRANCO         | arma       | mao    | 35  | 4 | 0 | 0  | 1 | A arma de todo guarda de aldeia.
+machado       | machado de guerra    | )      | CIANO          | arma       | mao    | 70  | 6 | 0 | 0  | 2 | Pesado, mas abre escudos ao meio.
+espada_longa  | espada longa         | )      | CIANO_CLARO    | arma       | mao    | 140 | 8 | 0 | 0  | 3 | Aço anão, equilibrado como uma pena.
+gibao         | gibão de couro       | [      | MARROM         | armadura   | corpo  | 20  | 0 | 1 | 0  | 1 | Couro curtido, cheira a estábulo.
+cota          | cota de malha        | [      | CINZA          | armadura   | corpo  | 80  | 0 | 3 | 0  | 2 | Milhares de anéis de ferro.
+placas        | armadura de placas   | [      | BRANCO         | armadura   | corpo  | 200 | 0 | 5 | 0  | 4 | Feita para um cavaleiro morto há muito.
+elmo          | elmo de ferro        | ^      | CINZA          | armadura   | cabeca | 40  | 0 | 1 | 0  | 1 | Amassado, mas ainda inteiro.
+escudo        | escudo de carvalho   | U+25A0 | MARROM         | armadura   | escudo | 30  | 0 | 1 | 0  | 1 | Madeira grossa com aro de ferro.
+escudo_torre  | escudo torre         | U+25A0 | CINZA          | armadura   | escudo | 110 | 0 | 2 | 0  | 3 | Quase uma porta com alça.
+anel_forca    | anel da força        | =      | AMARELO        | armadura   | anel   | 160 | 2 | 0 | 0  | 3 | O metal é quente ao toque.
+anel_pedra    | anel de pedra        | =      | CINZA          | armadura   | anel   | 160 | 0 | 2 | 0  | 3 | Sua pele parece mais dura.
+pocao_cura    | poção de cura        | !      | VERMELHO_CLARO | pocao      | nenhum | 15  | 0 | 0 | 12 | 1 | Um líquido vermelho e espesso.
+pocao_maior   | poção maior de cura  | !      | MAGENTA_CLARO  | pocao      | nenhum | 45  | 0 | 0 | 30 | 3 | Brilha no escuro.
+mapa          | pergaminho do mapa   | ?      | AMARELO        | pergaminho | nenhum | 25  | 0 | 0 | 0  | 1 | Revela o nível inteiro.
+coroa         | Coroa de Ferro       | U+0398 | AMARELO        | coroa      | nenhum | 0   | 0 | 0 | 0  | 0 | A coroa dos antigos reis do vale.

@@ -1,0 +1,146 @@
+# Diálogos de "A Coroa de Ferro".
+#  :id          começa um nó
+#  @Nome        quem fala (título da janela)
+#  ! comando    efeito ao entrar no nó
+#  * [cond] texto -> destino     opção (destino FIM encerra)
+# Condições: coroa, ferido, ouro:N, flag:nome, fundo:N  (! nega)
+# Efeitos:   loja ferreira, loja curandeira, curar, ouro N, vida N,
+#            flag nome, item id, vitoria
+
+# ------------------------------------------------------------------
+:anciao
+@Ancião Tobias
+O velho levanta os olhos do fogo. Os dedos tremem sobre o cajado.
+"Então é você quem vai descer. Que os antigos reis tenham piedade."
+* [coroa] (Mostrar a Coroa de Ferro) -> anciao_coroa
+* [!flag:missao] Descer aonde? -> anciao_missao
+* [flag:missao] Fale de novo sobre o Rei Corvo. -> anciao_corvo
+* [flag:missao fundo:3] A abadia parece não ter fim. -> anciao_fundo
+* Até logo, ancião. -> FIM
+
+:anciao_missao
+! flag missao
+"Por trinta invernos a Coroa de Ferro protegeu este vale. Enquanto ela repousava no altar da abadia, o rio corria limpo e o trigo crescia alto."
+
+"Na última lua nova, um homem de manto de penas entrou na abadia. Os monges fugiram. Ele levou a coroa para as criptas, cinco andares abaixo da terra. Chamam-no de Rei Corvo."
+* Por que eu? -> anciao_porque
+* Eu trago a coroa de volta. -> anciao_bencao
+
+:anciao_porque
+"Porque você ainda tem as duas pernas e nenhum juízo." Ele sorri, sem dentes. "E porque os outros que foram não voltaram."
+* Isso não ajuda muito. -> anciao_bencao
+
+:anciao_bencao
+! ouro 20
+"Fale com a Bruna, na forja. Uma lâmina melhor que essa adaga vai salvar a sua vida. E a Mãe Ilda tem poções para quem paga."
+
+"Tome. Era do meu filho." Ele estende uma bolsinha de couro. (Você recebe 20 moedas de ouro.)
+* Obrigado, ancião. -> FIM
+
+:anciao_corvo
+"Penas negras, olhos de brasa. Dizem que ele não morre, só troca de corpo. Mas ferro frio corta qualquer coisa que sangra."
+
+"A entrada da abadia fica a sudeste, depois do rio. Desça, e continue descendo."
+* Entendido. -> FIM
+
+:anciao_fundo
+"Cinco andares, diziam os monges. O terceiro é mais velho que a própria abadia: uma caverna que a água cavou. Não se perca por lá."
+* Vou continuar. -> FIM
+
+:anciao_coroa
+! vitoria
+O velho se levanta pela primeira vez em anos. Quando a coroa toca as mãos dele, o fogo da lareira cresce e fica azul.
+
+"Você conseguiu." A voz dele falha. "O vale está salvo."
+
+Lá fora, os sinos da abadia começam a tocar sozinhos.
+* (Fim) -> FIM
+
+# ------------------------------------------------------------------
+:ferreira
+@Bruna, a ferreira
+O martelo para no meio do golpe. Faíscas morrem no chão de terra.
+"Precisa de aço? Aço eu tenho. Fiado, não."
+* Mostre o que você tem. -> ferreira_loja
+* [!flag:dica_bruna] Algum conselho para quem vai à abadia? -> ferreira_dica
+* Só estou olhando. -> FIM
+
+:ferreira_loja
+! loja ferreira
+"Volte quando quiser. E volte inteiro."
+* Até mais. -> FIM
+
+:ferreira_dica
+! flag dica_bruna
+"Equipamento no corpo, não na mochila. Já vi gente morrer com uma cota de malha dobradinha nas costas." Ela ri, sem graça.
+
+"Aperte I para mexer na mochila. E para atacar, ande na direção do bicho."
+* Vou lembrar disso. -> ferreira
+
+# ------------------------------------------------------------------
+:curandeira
+@Mãe Ilda
+Cheiro de alecrim e de fumaça. A velha mexe um caldeirão sem olhar para você.
+"Sente-se, criança. Ou compre alguma coisa. Ou as duas."
+* [ferido ouro:10] Pode cuidar dos meus ferimentos? (10 de ouro) -> curandeira_cura
+* [ferido !ouro:10] Estou ferido, mas não tenho dinheiro... -> curandeira_fiado
+* Quero comprar poções. -> curandeira_loja
+* Até logo. -> FIM
+
+:curandeira_cura
+! ouro -10
+! curar
+Ela passa um unguento verde e amargo nas suas feridas. Arde como fogo, depois esfria como neve.
+"Pronto. Novo em folha. Quase."
+* Obrigado. -> curandeira
+
+:curandeira_fiado
+! curar
+! flag deve_ilda
+"Hmpf. Vai lá embaixo arriscar o pescoço por nós e eu ainda vou cobrar?" Ela cuida de você assim mesmo.
+"Mas me traga uma moeda ou duas quando voltar."
+* Pode deixar. -> curandeira
+
+:curandeira_loja
+! loja curandeira
+"Uma poção na mão vale mais que duas no caldeirão."
+* Até logo. -> FIM
+
+# ------------------------------------------------------------------
+:taberneiro
+@Gaspar, taberneiro
+O salão está quase vazio. Gaspar enxuga um copo que já está seco.
+"Desde que o corvo apareceu, ninguém mais bebe. Nem eu, e olha que eu sou o dono."
+* [ouro:3] Uma caneca de cerveja. (3 de ouro) -> taberneiro_cerveja
+* Ouviu algum boato? -> taberneiro_boato
+* Até mais. -> FIM
+
+:taberneiro_cerveja
+! ouro -3
+! vida 5
+A cerveja é morna e escura. Mas desce bem, e você se sente um pouco melhor.
+* Mais uma conversa. -> taberneiro
+
+:taberneiro_boato
+"Dizem que os ratos lá embaixo são do tamanho de cachorros. Ratos não me preocupam."
+
+"Os morcegos voam sem rumo: espere que cheguem perto e golpeie. E se vir um troll, fuja. Sério. Fuja."
+* [fundo:3] Eu já vi a caverna do terceiro nível. -> taberneiro_caverna
+* Obrigado pela dica. -> taberneiro
+
+:taberneiro_caverna
+! vida 5
+Gaspar deixa o copo cair. "Você desceu até lá e voltou? Essa cerveja é por conta da casa."
+* Saúde! -> taberneiro
+
+# ------------------------------------------------------------------
+:guarda
+@Guarda Rui
+O guarda cruza a lança na sua frente, depois a afasta. "Ah, é você. O ancião avisou."
+"A abadia é logo ali. Em cima da escada, aperte > para descer. E < para subir, se der tempo."
+* [!flag:missao] O ancião? -> guarda_anciao
+* Obrigado. -> FIM
+
+:guarda_anciao
+"O velho Tobias, na casinha perto da estrada, a oeste. Fale com ele antes de descer. Ele sabe das coisas."
+* Vou falar com ele. -> FIM
