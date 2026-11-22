@@ -9,7 +9,6 @@
 #if defined(_WIN32)
     #define WIN32_LEAN_AND_MEAN
     #include <windows.h>
-    #include <conio.h>
     #ifndef ENABLE_VIRTUAL_TERMINAL_PROCESSING
         #define ENABLE_VIRTUAL_TERMINAL_PROCESSING 0x0004
     #endif
@@ -51,8 +50,8 @@ static void ao_receber_sinal(int sinal)
 /* ===================================================================
  *                             WINDOWS
  * =================================================================== */
-static HANDLE        saida;
-static DWORD         modo_original;
+static HANDLE        entrada, saida;
+static DWORD         modo_entrada_original, modo_saida_original;
 static UINT          pagina_original;
 static LARGE_INTEGER frequencia, inicio;
 
@@ -66,13 +65,24 @@ void term_iniciar(void)
 {
     DWORD modo;
     if (iniciado) return;
-    saida = GetStdHandle(STD_OUTPUT_HANDLE);
-    GetConsoleMode(saida, &modo_original);
-    modo = modo_original | ENABLE_PROCESSED_OUTPUT
-                         | ENABLE_VIRTUAL_TERMINAL_PROCESSING;
-    SetConsoleMode(saida, modo);          /* liga as sequências ANSI */
+    entrada = GetStdHandle(STD_INPUT_HANDLE);
+    saida   = GetStdHandle(STD_OUTPUT_HANDLE);
+
+    /* saída: liga as sequências ANSI e o UTF-8 */
+    GetConsoleMode(saida, &modo_saida_original);
+    modo = modo_saida_original | ENABLE_PROCESSED_OUTPUT
+                               | ENABLE_VIRTUAL_TERMINAL_PROCESSING;
+    SetConsoleMode(saida, modo);
     pagina_original = GetConsoleOutputCP();
-    SetConsoleOutputCP(CP_UTF8);          /* acentos e símbolos em UTF-8 */
+    SetConsoleOutputCP(CP_UTF8);
+
+    /* entrada: só o Ctrl+C continua especial. Sem eco, sem esperar o
+     * Enter, sem eventos de mouse e sem a "edição rápida", que congela
+     * o programa quando alguém clica na janela. */
+    GetConsoleMode(entrada, &modo_entrada_original);
+    SetConsoleMode(entrada, ENABLE_PROCESSED_INPUT | ENABLE_EXTENDED_FLAGS);
+    FlushConsoleInputBuffer(entrada);     /* esquece teclas antigas */
+
     QueryPerformanceFrequency(&frequencia);
     QueryPerformanceCounter(&inicio);
     iniciado = 1;
@@ -85,29 +95,41 @@ void term_encerrar(void)
 {
     if (!iniciado) return;
     term_escrever(SEQ_SAIR, sizeof SEQ_SAIR - 1);
-    SetConsoleMode(saida, modo_original);
+    SetConsoleMode(saida, modo_saida_original);
+    SetConsoleMode(entrada, modo_entrada_original);
     SetConsoleOutputCP(pagina_original);
     iniciado = 0;
 }
 
+/* O console do Windows guarda uma fila de EVENTOS: tecla apertada,
+ * tecla solta, mouse, foco, mudança de tamanho... Lemos a fila, um
+ * evento por vez, até achar uma tecla apertada. O resto é descartado.
+ * Se a fila acabar sem nenhuma, não esperamos: TECLA_NENHUMA. */
 int term_tecla(void)
 {
-    int c;
-    if (!_kbhit()) return TECLA_NENHUMA;
-    c = _getch();
-    if (c == 0 || c == 224) {        /* tecla especial: vem um 2º código */
-        c = _getch();
-        switch (c) {
-            case 72: return TECLA_CIMA;
-            case 80: return TECLA_BAIXO;
-            case 75: return TECLA_ESQUERDA;
-            case 77: return TECLA_DIREITA;
+    INPUT_RECORD evento;
+    DWORD pendentes, lidos;
+
+    while (GetNumberOfConsoleInputEvents(entrada, &pendentes) && pendentes > 0) {
+        const KEY_EVENT_RECORD *k = &evento.Event.KeyEvent;
+        if (!ReadConsoleInputW(entrada, &evento, 1, &lidos) || lidos == 0)
+            break;
+        if (evento.EventType != KEY_EVENT || !k->bKeyDown)
+            continue;                         /* não é tecla apertada */
+        switch (k->wVirtualKeyCode) {         /* teclas pelo "código virtual" */
+            case VK_UP:     return TECLA_CIMA;
+            case VK_DOWN:   return TECLA_BAIXO;
+            case VK_LEFT:   return TECLA_ESQUERDA;
+            case VK_RIGHT:  return TECLA_DIREITA;
+            case VK_RETURN: return TECLA_ENTER;
+            case VK_BACK:   return TECLA_BACKSPACE;
+            case VK_ESCAPE: return TECLA_ESC;
         }
-        return TECLA_NENHUMA;
+        if (k->uChar.UnicodeChar > 0 && k->uChar.UnicodeChar < 256)
+            return k->uChar.UnicodeChar;      /* letra, número, espaço... */
+        /* Shift, Ctrl, F1 e companhia: não interessam, seguimos lendo */
     }
-    if (c == '\r') return TECLA_ENTER;
-    if (c == 8)    return TECLA_BACKSPACE;
-    return c;
+    return TECLA_NENHUMA;
 }
 
 void term_dormir(int ms)
@@ -126,7 +148,8 @@ double term_tempo(void)
 void term_tamanho(int *colunas, int *linhas)
 {
     CONSOLE_SCREEN_BUFFER_INFO info;
-    if (GetConsoleScreenBufferInfo(saida, &info)) {
+    /* pede o handle aqui mesmo: os jogos medem a janela ANTES de term_iniciar */
+    if (GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &info)) {
         *colunas = info.srWindow.Right - info.srWindow.Left + 1;
         *linhas  = info.srWindow.Bottom - info.srWindow.Top + 1;
     } else {
