@@ -16,6 +16,7 @@
     /* Pede ao sistema as funções POSIX (clock_gettime, nanosleep...).
      * Precisa vir ANTES de qualquer #include. */
     #define _POSIX_C_SOURCE 200809L
+    #include <errno.h>
     #include <termios.h>
     #include <unistd.h>
     #include <sys/select.h>
@@ -170,7 +171,11 @@ void term_escrever(const char *dados, size_t n)
     /* write() pode escrever só uma parte; repetimos até acabar. */
     while (n > 0) {
         ssize_t escritos = write(STDOUT_FILENO, dados, n);
-        if (escritos <= 0) return;
+        if (escritos < 0 && (errno == EINTR || errno == EAGAIN)) {
+            term_dormir(1);          /* terminal ocupado: tenta de novo */
+            continue;
+        }
+        if (escritos <= 0) return;   /* erro de verdade: desiste */
         dados += escritos;
         n     -= (size_t)escritos;
     }
@@ -180,12 +185,15 @@ void term_iniciar(void)
 {
     struct termios cru;
     if (iniciado) return;
-    tcgetattr(STDIN_FILENO, &original);
+    if (tcgetattr(STDIN_FILENO, &original) != 0) {
+        fprintf(stderr, "Rode o jogo direto num terminal.\n");
+        exit(1);
+    }
     cru = original;
     cru.c_lflag &= ~(tcflag_t)(ICANON | ECHO); /* sem esperar Enter, sem eco */
     cru.c_iflag &= ~(tcflag_t)(IXON | ICRNL);  /* Ctrl+S livre; Enter = \r  */
-    cru.c_cc[VMIN]  = 0;     /* read() não espera por nenhum byte...       */
-    cru.c_cc[VTIME] = 0;     /* ...e nem por tempo algum                   */
+    cru.c_cc[VMIN]  = 1;     /* read() devolve assim que houver 1 byte...  */
+    cru.c_cc[VTIME] = 0;     /* ...sem prazo. Quem decide esperar é select */
     tcsetattr(STDIN_FILENO, TCSAFLUSH, &cru);
     clock_gettime(CLOCK_MONOTONIC, &inicio);
     iniciado = 1;
@@ -203,21 +211,20 @@ void term_encerrar(void)
     iniciado = 0;
 }
 
-/* Lê um byte da entrada. Se 'espera_ms' > 0, aguarda até esse tempo
- * pela chegada do byte. Devolve -1 se nada chegou. */
+/* Lê um byte da entrada, esperando no máximo 'espera_ms' milissegundos
+ * (0 = só pergunta). Devolve -1 se nada chegou. Primeiro select diz se
+ * há algo para ler; só então chamamos read(), que assim nunca trava. */
 static int ler_byte(int espera_ms)
 {
     unsigned char c;
-    if (espera_ms > 0) {
-        fd_set conjunto;
-        struct timeval limite;
-        FD_ZERO(&conjunto);
-        FD_SET(STDIN_FILENO, &conjunto);
-        limite.tv_sec  = 0;
-        limite.tv_usec = espera_ms * 1000;
-        if (select(STDIN_FILENO + 1, &conjunto, NULL, NULL, &limite) <= 0)
-            return -1;
-    }
+    fd_set conjunto;
+    struct timeval limite;
+    FD_ZERO(&conjunto);
+    FD_SET(STDIN_FILENO, &conjunto);
+    limite.tv_sec  = 0;
+    limite.tv_usec = espera_ms * 1000;
+    if (select(STDIN_FILENO + 1, &conjunto, NULL, NULL, &limite) <= 0)
+        return -1;                               /* nada chegou */
     if (read(STDIN_FILENO, &c, 1) == 1) return c;
     return -1;
 }
